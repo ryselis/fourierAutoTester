@@ -35,6 +35,14 @@ public class NeighbourChooser {
         return result;
     }
 
+    /**
+     * Method scans how the class given in parameter is constructed and creates a new mutated parameter from a given
+     * parameter. If only the default constructor is available, calls it, else finds first available constructor,
+     * generates parameters for it and then calls it. The initial parameters have to bet in initial parameters as it is
+     * hard to tell what the constructor is doing inside. Mutations currently work only for integer and double
+     * constructor parameters.
+     * @return a mutated parameter
+     */
     public Parameter constructNewParameter() {
         Class cl = parameter.getValue().getClass();
         Constructor[] constructors = cl.getDeclaredConstructors();
@@ -70,7 +78,6 @@ public class NeighbourChooser {
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 object = null;
             }
-
         }
         return new Parameter(cl.cast(object), newlyAppliedConstructorArgs);
     }
