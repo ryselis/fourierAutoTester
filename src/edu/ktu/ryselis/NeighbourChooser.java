@@ -38,12 +38,31 @@ public class NeighbourChooser {
     /**
      * Method scans how the class given in parameter is constructed and creates a new mutated parameter from a given
      * parameter. If only the default constructor is available, calls it, else finds first available constructor,
-     * generates parameters for it and then calls it. The initial parameters have to bet in initial parameters as it is
+     * generates parameters for it and then calls it. The initial parameters have to be in initial parameters as it is
      * hard to tell what the constructor is doing inside. Mutations currently work only for integer and double
-     * constructor parameters.
+     * constructor parameters and on arrays of objects that would accept those types as constructor parameters.
      * @return a mutated parameter
      */
     public Parameter constructNewParameter() {
+        if (parameter.getValue() instanceof Object[]){
+            Object[] values = (Object[]) parameter.getValue();
+            Parameter[] newParameters = new Parameter[values.length];
+            for (int i = 0; i < values.length; i++) {
+                Object value = values[i];
+                Object[] appliedConstructorArgsForValue = (Object[]) parameter.getAppliedConstructorParameters()[i];
+                Parameter parameterForSingleValue = new Parameter(value, appliedConstructorArgsForValue);
+                NeighbourChooser chooserForSingleValue = new NeighbourChooser(parameterForSingleValue);
+                Parameter mutatedParameterForSingleValue = chooserForSingleValue.constructNewParameter();
+                newParameters[i] = mutatedParameterForSingleValue;
+            }
+            Object[] newValues = new Object[values.length];
+            Object[][] newConstructorArgs = new Object[values.length][];
+            for (int i = 0; i < values.length; i++){
+                newValues[i] = newParameters[i].getValue();
+                newConstructorArgs[i] = newParameters[i].getAppliedConstructorParameters();
+            }
+            return new Parameter(newValues, newConstructorArgs);
+        }
         Class cl = parameter.getValue().getClass();
         Constructor[] constructors = cl.getDeclaredConstructors();
         Object object;
