@@ -22,6 +22,7 @@ public class Oracle {
         if ((data.length > 2) && (data.length % 2 != 0) && (result.length != data.length))
             return false;
 
+
         return true;
 
     }
