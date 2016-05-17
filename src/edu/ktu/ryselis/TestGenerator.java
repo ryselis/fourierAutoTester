@@ -7,6 +7,12 @@ import java.util.Collection;
  * Created by ryselis on 16.5.14.
  */
 public class TestGenerator {
+    private Collection<ParameterDefinition> parameterDefinitions;
+
+    public TestGenerator(Collection<ParameterDefinition> parameterDefinitions) {
+        this.parameterDefinitions = parameterDefinitions;
+    }
+
     public Collection<TestCase> generateTestCases(Method method, Collection<Parameter> parameters) {
         Collection<TestCase> testCaseCases = new ArrayList<>();
         return testCaseCases;
@@ -83,8 +89,8 @@ public class TestGenerator {
     private Solution chooseRandomSolution(Solution startingSolution) {
         Collection<Parameter> newParameters = new ArrayList<>();
         for (Parameter parameter: startingSolution.getParameters()){
-            NeighbourChooser chooser = new NeighbourChooser(parameter);
-            Parameter newParameter = chooser.constructNewParameter();
+            ObjectGenerator chooser = new ObjectGenerator();
+            Parameter newParameter = chooser.constructNewParameter(parameter);
             newParameters.add(newParameter);
         }
         return new Solution(newParameters);
@@ -95,7 +101,13 @@ public class TestGenerator {
     }
 
     private Solution getStartingSolution() {
-        return null;
+        Collection<Parameter> newParameters = new ArrayList<>();
+        for (ParameterDefinition parameterDefinition: parameterDefinitions){
+            ObjectGenerator chooser = new ObjectGenerator();
+            Parameter newParameter = chooser.constructRandomParameter(parameterDefinition);
+            newParameters.add(newParameter);
+        }
+        return new Solution(newParameters);
     }
 
 }

@@ -16,7 +16,7 @@ public class Parameter<T> {
         this.appliedConstructorParameters = appliedConstructorParameters;
     }
 
-    Type getType() {
+    public Type getType() {
         return type;
     }
 
