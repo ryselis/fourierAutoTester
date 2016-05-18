@@ -1,5 +1,7 @@
 package edu.ktu.ryselis;
 
+import edu.ktu.ryselis.parameterConstraints.ParameterConstraint;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -8,46 +10,19 @@ import java.util.Collection;
  */
 public class TestGenerator {
     private Collection<ParameterDefinition> parameterDefinitions;
+    private Method method;
+
+    public TestGenerator(java.lang.reflect.Method method, String pathToClassSource){
+        this.method = new Method(method, pathToClassSource);
+        parameterDefinitions = new ArrayList<>();
+        for (Class<?> aClass : method.getParameterTypes()) {
+            parameterDefinitions.add(new ParameterDefinition(aClass));
+        }
+    }
 
     public TestGenerator(Collection<ParameterDefinition> parameterDefinitions) {
         this.parameterDefinitions = parameterDefinitions;
     }
-
-    public Collection<TestCase> generateTestCases(Method method, Collection<Parameter> parameters) {
-        Collection<TestCase> testCaseCases = new ArrayList<>();
-        return testCaseCases;
-    }
-
-//    private Solution generateSolution() {
-//        double temp = getStartingTemperature();
-//        Solution x = createRandomSolution();
-//        double currentTemperature = temp;
-//        int numberOfIterations = 10;
-//        double coolingRate = 1;
-//        for (int i = 0; i < numberOfIterations; i++) {
-//            double fitness = x.getFitness();
-//            Solution mutated = mutate(x);
-//            double newFitness = mutated.getFitness();
-//            if (newFitness < fitness) {
-//                double p = PR(); // no idea what you're talking about here
-//                if (p > UR(0, 1)) { // likewise
-//                    // then do nothing
-//                } else {
-//                    x = mutated;
-//                }
-//                currentTemperature *= coolingRate;
-//            }
-//        }
-//        return x;
-//    }
-//
-//    private Solution mutate(Solution x) {
-//        return null;
-//    }
-//
-//    private Solution createRandomSolution() {
-//        return null;
-//    }
 
     private double getStartingTemperature() {
         return 0;
@@ -110,4 +85,8 @@ public class TestGenerator {
         return new Solution(newParameters);
     }
 
+    private Collection<ParameterConstraint> getPossibleParameterConstraints(){
+        CodeParser codeParser = new CodeParser(method);
+        return codeParser.getBranches();
+    }
 }
