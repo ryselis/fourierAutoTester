@@ -1,7 +1,5 @@
 package edu.ktu.ryselis.parameterConstraints;
 
-import java.util.Collection;
-
 /**
  * Created by ryselis on 16.5.18.
  */
@@ -14,12 +12,12 @@ public class ArrayLengthParameterConstraint implements ParameterConstraint {
 
     @Override
     public double validateValue(Object value) {
-        Collection collection = (Collection) value;
-        return singleValueConstraint.validateValue(collection.size());
+        Object[] collection = (Object[]) value;
+        return singleValueConstraint.validateValue(collection.length);
     }
 
     @Override
     public ParameterConstraint getInverse() {
-        return this;
+        return new ArrayLengthParameterConstraint(singleValueConstraint.getInverse());
     }
 }

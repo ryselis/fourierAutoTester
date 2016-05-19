@@ -20,36 +20,40 @@ public class TestGenerator {
         }
     }
 
-    public TestGenerator(Collection<ParameterDefinition> parameterDefinitions) {
-        this.parameterDefinitions = parameterDefinitions;
-    }
-
     private double getStartingTemperature() {
         return 0;
     }
 
-    private Solution generate() {
-        Solution startingSolution = getStartingSolution();
-        double temp = getStartingTemperature();
-        do {
-            int it = 0;
-            int numberOfSolutions = 200;
+    public Collection<Solution> generate() {
+        ParameterConstraintGenerator generator = new ParameterConstraintGenerator(getPossibleParameterConstraints());
+        Collection<Solution> solutions = new ArrayList<>();
+        while (true) {
+            Collection<ParameterConstraint> parameterConstraints = generator.next();
+            if (parameterConstraints == null) {
+                break;
+            }
+            Solution startingSolution = getStartingSolution();
+            double temp = getStartingTemperature();
+            int cannotFindBetterSolutionForThisManyRounds = 0;
             do {
+                cannotFindBetterSolutionForThisManyRounds++;
                 Solution solution = chooseRandomSolution(startingSolution);
-                double deltaE = obj(solution) - obj(startingSolution);
+                double deltaE = obj(solution, parameterConstraints) - obj(startingSolution, parameterConstraints);
                 if (deltaE < 0) {
                     startingSolution = solution;
+                    cannotFindBetterSolutionForThisManyRounds = 0;
                 } else {
                     double r = Math.random();
                     if (r < Math.pow(Math.E, -deltaE / temp)) {
                         startingSolution = solution;
+                        cannotFindBetterSolutionForThisManyRounds = 0;
                     }
                 }
-                it++;
-            } while (it != numberOfSolutions);
-            temp = decreaseTemperatureAccordingToSchedule(temp);
-        } while (!stoppingConditionReached());
-        return startingSolution;
+                temp = decreaseTemperatureAccordingToSchedule(temp);
+            } while (!stoppingConditionReached(cannotFindBetterSolutionForThisManyRounds));
+            solutions.add(startingSolution);
+        }
+        return solutions;
     }
 
     private double decreaseTemperatureAccordingToSchedule(double temp) {
@@ -57,8 +61,14 @@ public class TestGenerator {
         return temp / (1 + beta * temp);
     }
 
-    private double obj(Solution startingSolution) {
-        return 0;
+    private double obj(Solution startingSolution, Collection<ParameterConstraint> parameterConstraints) {
+        double totalResult = 0;
+        for (Parameter parameter : startingSolution.getParameters()) {
+            for (ParameterConstraint possibleParameterConstraint : parameterConstraints) {
+                totalResult += possibleParameterConstraint.validateValue(parameter.getValue());
+            }
+        }
+        return totalResult / (parameterConstraints.size() * startingSolution.getParameters().size());
     }
 
     private Solution chooseRandomSolution(Solution startingSolution) {
@@ -71,8 +81,8 @@ public class TestGenerator {
         return new Solution(newParameters);
     }
 
-    private boolean stoppingConditionReached() {
-        return false;
+    private boolean stoppingConditionReached(int cannotFindBetterSolutionForThisManyRounds) {
+        return cannotFindBetterSolutionForThisManyRounds > 100;
     }
 
     private Solution getStartingSolution() {

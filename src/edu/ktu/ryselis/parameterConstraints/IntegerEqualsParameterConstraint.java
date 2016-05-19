@@ -21,7 +21,7 @@ public class IntegerEqualsParameterConstraint implements ParameterConstraint {
         double equalsToAbs = Math.abs(equalsTo);
         double divisor = vAbs > equalsToAbs ? vAbs : equalsToAbs;
         double result = mismatch / divisor;
-        if (mismatch > 1){
+        if (result > 1){
             result = 1;
         }
         return result;

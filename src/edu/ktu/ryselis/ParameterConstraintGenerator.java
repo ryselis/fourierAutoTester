@@ -35,6 +35,7 @@ public class ParameterConstraintGenerator{
                 }
                 i++;
             }
+            currentConstraint++;
             return newConstraints;
         } else {
             return null;
