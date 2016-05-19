@@ -12,7 +12,7 @@ public class Solution {
         parameters = params;
     }
 
-    Collection<Parameter> getParameters() {
+    public Collection<Parameter> getParameters() {
         return parameters;
     }
 }
