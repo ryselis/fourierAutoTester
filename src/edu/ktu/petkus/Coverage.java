@@ -47,7 +47,8 @@ public class Coverage {
         final Class<?> targetClass = memoryClassLoader.loadClass(targetName);
 
         // Here we execute our test target class through its Runnable interface:
-        final Runnable targetInstance = (Runnable) targetClass.newInstance();
+       // final Runnable targetInstance = (Runnable) targetClass.newInstance();
+//        final Runnable targetInstance = (Runnable) instance;
     }
 
     public void EndCoverage() throws Exception{
