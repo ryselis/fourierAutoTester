@@ -22,18 +22,30 @@ public class ObjectGenerator {
         ValueGenerator valueGenerator = new NeighbourValueGenerator();
         if (parameter.getValue() instanceof Object[]){
             Object[] values = (Object[]) parameter.getValue();
-            Parameter[] newParameters = new Parameter[values.length];
-            for (int i = 0; i < values.length; i++) {
-                Object value = values[i];
-                Object[] appliedConstructorArgsForValue = (Object[]) parameter.getAppliedConstructorParameters()[i];
+            int newArrayLength = -1;
+            while (newArrayLength < 0){
+                newArrayLength = new NeighbourValueGenerator().generateValue(values.length);
+            }
+            Parameter[] newParameters = new Parameter[newArrayLength];
+            for (int i = 0; i < newParameters.length; i++) {
+                Object value;
+                Object[] appliedConstructorArgsForValue;
+                if (i < values.length){
+                    value = values[i];
+                    appliedConstructorArgsForValue = (Object[]) parameter.getAppliedConstructorParameters()[i];
+                } else {
+                    Parameter tmpParameter = constructRandomParameter(new ParameterDefinition(values.getClass().getComponentType()));
+                    value = tmpParameter.getValue();
+                    appliedConstructorArgsForValue = tmpParameter.getAppliedConstructorParameters();
+                }
                 Parameter parameterForSingleValue = new Parameter(value, appliedConstructorArgsForValue);
                 ObjectGenerator chooserForSingleValue = new ObjectGenerator();
                 Parameter mutatedParameterForSingleValue = chooserForSingleValue.constructNewParameter(parameterForSingleValue);
                 newParameters[i] = mutatedParameterForSingleValue;
             }
-            Object[] newValues = new Object[values.length];
-            Object[][] newConstructorArgs = new Object[values.length][];
-            for (int i = 0; i < values.length; i++){
+            Object[] newValues = new Object[newParameters.length];
+            Object[][] newConstructorArgs = new Object[newParameters.length][];
+            for (int i = 0; i < newParameters.length; i++){
                 newValues[i] = newParameters[i].getValue();
                 newConstructorArgs[i] = newParameters[i].getAppliedConstructorParameters();
             }
@@ -87,7 +99,7 @@ public class ObjectGenerator {
         if (t.isArray()){
             Class innerClass = t.getComponentType();
             ParameterDefinition innerClassParameterDefinition = new ParameterDefinition(innerClass);
-            int arraySize = power(2, (int) (Math.random() * 11));
+            int arraySize = (int) (Math.random() * 3000);
             Object[] newInstance = (Object[]) Array.newInstance(innerClass, arraySize);
             Object[][] newConstructorArgs = new Object[arraySize][];
             for (int i = 0; i < arraySize; i++){
@@ -131,19 +143,5 @@ public class ObjectGenerator {
             }
         }
         return new Parameter(object, newlyAppliedConstructorArgs);
-    }
-
-    private int power(int base, int power){
-        if (power == 0){
-            return 1;
-        }
-        if (power == 1){
-            return base;
-        }
-        if (power % 2 == 0){
-            return power(base * base, power / 2);
-        } else {
-            return base * power(base * base, power / 2);
-        }
     }
 }

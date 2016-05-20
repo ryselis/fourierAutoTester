@@ -6,12 +6,12 @@ package edu.ktu.ryselis;
 public class NeighbourValueGenerator implements ValueGenerator {
     @Override
     public int generateValue(int basedOn) {
-        int upperBound = Integer.MAX_VALUE / 1000000;
-        int lowerBound = Integer.MIN_VALUE / 1000000;
+        int upperBound = Math.abs(basedOn) / 2 + 2;
+        int lowerBound = -Math.abs(basedOn) / 2 - 2;
         int variance = (int) (Math.random() * (upperBound - lowerBound) + lowerBound);
         long result = basedOn + variance;
-        if (result > Integer.MAX_VALUE || result < Integer.MIN_VALUE){
-            result = basedOn;
+        if (result > upperBound || result < lowerBound){
+            result = generateValue(basedOn);
         }
         return (int) result;
     }
