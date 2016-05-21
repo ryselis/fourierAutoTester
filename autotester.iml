@@ -36,7 +36,23 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="org.jacoco.core-0.7.6.201602180812" level="project" />
-    <orderEntry type="library" name="asm-5.1" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/libs/asm-all-5.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/libs/org.jacoco.core-0.7.6.201602180812.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
