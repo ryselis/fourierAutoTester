@@ -11,10 +11,15 @@ import java.lang.invoke.MethodHandles;
 public class CoverageTests {
     @Test
     public void TestBasicFunctionality(){
-        Coverage coverager = new Coverage();
-        coverager.BeginCoverage(CoverageTargets.class);
+        Coverage coverager = new Coverage(System.out);
         CoverageTargets target = new CoverageTargets();
-        int res = target.method1(0);
-        coverager.EndCoverage(CoverageTargets.class);
+        try{
+            coverager.BeginCoverage(target);
+            int res = target.method1(0);
+            coverager.EndCoverage();
+        }
+        catch (Exception e){
+
+        }
     }
 }
