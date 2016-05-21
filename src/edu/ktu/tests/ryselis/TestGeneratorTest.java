@@ -41,4 +41,11 @@ public class TestGeneratorTest {
         Assert.assertTrue("Generated tests do not contain array of even size", hasEvenLengthElement);
     }
 
+    @Test
+    public void testGenerateOnIfft() throws Exception{
+        File f = new File("src/edu/ktu/tests/ryselis/FFT.java");
+        TestGenerator generator = new TestGenerator(FFT.class.getMethod("ifft", Complex[].class), f.getAbsolutePath());
+        Collection<Solution> generated = generator.generate();
+        Assert.assertTrue(generated.size() > 0);
+    }
 }
