@@ -1,6 +1,7 @@
 package edu.ktu.test.petkus;
 
 import edu.ktu.petkus.Coverage;
+import edu.ktu.petkus.TestHolder;
 import org.junit.Test;
 
 import java.lang.invoke.MethodHandles;
@@ -14,9 +15,8 @@ public class CoverageTests {
         Coverage coverager = new Coverage(System.out);
         CoverageTargets target = new CoverageTargets();
         try{
-            coverager.BeginCoverage(target);
-            int res = target.method1(0);
-            coverager.EndCoverage();
+            double coverage = coverager.Cover(CoverageTargets.class, TestHolder.class);
+            System.out.print(coverage);
         }
         catch (Exception e){
 

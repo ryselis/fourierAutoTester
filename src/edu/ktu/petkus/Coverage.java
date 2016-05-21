@@ -23,8 +23,10 @@ public class Coverage {
         this.out = out;
     }
 
-    public void BeginCoverage(Object instance) throws Exception {
-        targetName = instance.getClass().getName();
+    public double Cover(Class c, Class testHolder) throws Exception {
+        double res = 0;
+        targetName = c.getName();
+        String holderName = testHolder.getName();
 
         // For instrumentation and runtime we need a IRuntime instance
         // to collect execution data:
@@ -34,6 +36,7 @@ public class Coverage {
         // that contains additional probes for execution data recording:
         final Instrumenter instr = new Instrumenter(runtime);
         final byte[] instrumented = instr.instrument(getTargetClass(targetName), targetName);
+        final byte[] instrumented2 = instr.instrument(getTargetClass(holderName), holderName);
 
         // Now we're ready to run our instrumented class and need to startup the
         // runtime first:
@@ -44,16 +47,15 @@ public class Coverage {
         // instrumented class definition from a byte[] instances.
         final MemoryClassLoader memoryClassLoader = new MemoryClassLoader();
         memoryClassLoader.addDefinition(targetName, instrumented);
+        memoryClassLoader.addDefinition(holderName, instrumented2);
         final Class<?> targetClass = memoryClassLoader.loadClass(targetName);
+        final Class<?> holderClass = memoryClassLoader.loadClass(holderName);
 
         // Here we execute our test target class through its Runnable interface:
-       // final Runnable targetInstance = (Runnable) targetClass.newInstance();
-//        final Runnable targetInstance = (Runnable) instance;
-    }
+        // final Runnable targetInstance = (Runnable) targetClass.newInstance();
+        final Runnable targetInstance = (Runnable) holderClass.newInstance();
+        targetInstance.run();
 
-    public void EndCoverage() throws Exception{
-        // At the end of test execution we collect execution data and shutdown
-        // the runtime:
         final ExecutionDataStore executionData = new ExecutionDataStore();
         final SessionInfoStore sessionInfos = new SessionInfoStore();
         data.collect(executionData, sessionInfos, false);
@@ -78,7 +80,9 @@ public class Coverage {
             for (int i = cc.getFirstLine(); i <= cc.getLastLine(); i++) {
                 out.printf("Line %s: %s%n", Integer.valueOf(i));
             }
+            res = (cc.getLineCounter().getTotalCount() - cc.getLineCounter().getMissedCount()) / cc.getLineCounter().getTotalCount() * 100;
         }
+        return res;
     }
 
     public InputStream getTargetClass(final String name) {
