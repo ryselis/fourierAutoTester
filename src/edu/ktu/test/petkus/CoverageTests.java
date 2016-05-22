@@ -1,7 +1,9 @@
 package edu.ktu.test.petkus;
 
 import edu.ktu.petkus.Coverage;
+import edu.ktu.petkus.GeneratorTestHolder;
 import edu.ktu.petkus.TestHolder;
+import edu.ktu.tests.ryselis.FFT;
 import org.junit.Test;
 
 import java.lang.invoke.MethodHandles;
@@ -19,7 +21,19 @@ public class CoverageTests {
             System.out.print(coverage);
         }
         catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
+    @Test
+    public void TestFFTGenerator(){
+        Coverage coverager = new Coverage(System.out);
+        try{
+            double coverage = coverager.Cover(FFT.class, GeneratorTestHolder.class);
+            System.out.print(coverage);
+        }
+        catch (Exception e){
+            e.printStackTrace();
         }
     }
 }
