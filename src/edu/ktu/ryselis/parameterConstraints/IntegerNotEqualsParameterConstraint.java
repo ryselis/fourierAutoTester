@@ -20,4 +20,9 @@ public class IntegerNotEqualsParameterConstraint implements ParameterConstraint 
     public ParameterConstraint getInverse() {
         return new IntegerEqualsParameterConstraint(notEqualTo);
     }
+
+    @Override
+    public boolean acceptsSingleValue() {
+        return true;
+    }
 }

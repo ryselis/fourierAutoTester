@@ -6,4 +6,5 @@ package edu.ktu.ryselis.parameterConstraints;
 public interface ParameterConstraint {
     double validateValue(Object value);
     ParameterConstraint getInverse();
+    boolean acceptsSingleValue();
 }

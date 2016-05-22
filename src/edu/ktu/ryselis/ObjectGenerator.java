@@ -1,8 +1,6 @@
 package edu.ktu.ryselis;
 
 import java.lang.reflect.*;
-import java.lang.reflect.Method;
-import java.math.BigInteger;
 
 /**
  * Created by ryselis on 16.5.14.
@@ -18,13 +16,13 @@ public class ObjectGenerator {
      * @param parameter an existing parameter we want to mutate
      * @return a mutated parameter
      */
-    public Parameter constructNewParameter(Parameter parameter) {
+    public Parameter constructNewParameter(Parameter parameter, double objFunc) {
         ValueGenerator valueGenerator = new NeighbourValueGenerator();
         if (parameter.getValue() instanceof Object[]){
             Object[] values = (Object[]) parameter.getValue();
             int newArrayLength = -1;
             while (newArrayLength < 0){
-                newArrayLength = new NeighbourValueGenerator().generateValue(values.length);
+                newArrayLength = new NeighbourValueGenerator().generateValue(values.length, objFunc);
             }
             Parameter[] newParameters = new Parameter[newArrayLength];
             for (int i = 0; i < newParameters.length; i++) {
@@ -40,7 +38,7 @@ public class ObjectGenerator {
                 }
                 Parameter parameterForSingleValue = new Parameter(value, appliedConstructorArgsForValue);
                 ObjectGenerator chooserForSingleValue = new ObjectGenerator();
-                Parameter mutatedParameterForSingleValue = chooserForSingleValue.constructNewParameter(parameterForSingleValue);
+                Parameter mutatedParameterForSingleValue = chooserForSingleValue.constructNewParameter(parameterForSingleValue, objFunc);
                 newParameters[i] = mutatedParameterForSingleValue;
             }
             Object[] newValues = new Object[newParameters.length];
@@ -71,7 +69,7 @@ public class ObjectGenerator {
                 Class parameterType = parameterTypes[i];
                 if (parameterType == Integer.TYPE) {
                     int previouslyAppliedArg = (int) appliedConstructorArgs[i];
-                    int newValue = valueGenerator.generateValue(previouslyAppliedArg);
+                    int newValue = valueGenerator.generateValue(previouslyAppliedArg, objFunc);
                     newlyAppliedConstructorArgs[i] = newValue;
                 }
                 if (parameterType == Double.TYPE){
@@ -128,7 +126,7 @@ public class ObjectGenerator {
                 Class parameterType = parameterTypes[i];
 
                 if (parameterType == Integer.TYPE) {
-                    int newValue = valueGenerator.generateValue(0);
+                    int newValue = valueGenerator.generateValue(0, 0.5);
                     newlyAppliedConstructorArgs[i] = newValue;
                 }
                 if (parameterType == Double.TYPE){
