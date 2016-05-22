@@ -10,6 +10,12 @@ public class TestHolder implements Runnable {
 
     @Override
     public void run() {
-        int res = target.method1(0);
+        target.method1(0);
+        target.method1(1);
+        target.method1(-1);
+        target.method2(0);
+        target.method2(1);
+        target.method2(2);
+        target.method2(3);
     }
 }

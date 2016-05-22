@@ -69,18 +69,22 @@ public class Coverage {
 
         // Let's dump some metrics and line coverage information:
         for (final IClassCoverage cc : coverageBuilder.getClasses()) {
-            out.printf("Coverage of class %s%n", cc.getName());
+//            out.printf("Coverage of class %s%n", cc.getName());
 
-            printCounter("instructions", cc.getInstructionCounter());
-            printCounter("branches", cc.getBranchCounter());
-            printCounter("lines", cc.getLineCounter());
-            printCounter("methods", cc.getMethodCounter());
-            printCounter("complexity", cc.getComplexityCounter());
+//            printCounter("instructions", cc.getInstructionCounter());
+//            printCounter("branches", cc.getBranchCounter());
+//            printCounter("lines", cc.getLineCounter());
+//            printCounter("methods", cc.getMethodCounter());
+//            printCounter("complexity", cc.getComplexityCounter());
 
-            for (int i = cc.getFirstLine(); i <= cc.getLastLine(); i++) {
-                out.printf("Line %s: %s%n", Integer.valueOf(i));
-            }
-            res = (cc.getLineCounter().getTotalCount() - cc.getLineCounter().getMissedCount()) / cc.getLineCounter().getTotalCount() * 100;
+//            for (int i = cc.getFirstLine(); i <= cc.getLastLine(); i++) {
+//                out.printf("Line %s: %s%n", Integer.valueOf(i));
+//            }
+            int totalCount = cc.getLineCounter().getTotalCount();
+            int missedCount = cc.getLineCounter().getMissedCount();
+            int hitCount = totalCount - missedCount;
+
+            res = ((hitCount * 100) / totalCount);
         }
         return res;
     }
