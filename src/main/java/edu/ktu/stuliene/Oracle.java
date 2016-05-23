@@ -17,6 +17,7 @@ public class Oracle {
             return false;*/
 
 
+
         for (int i = 0; i < data.length; i++) {
             for (int j = 0; j < result.length; j++) {
                 if (data[i].getType() != result[j].getType())
