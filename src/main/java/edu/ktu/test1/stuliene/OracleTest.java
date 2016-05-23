@@ -15,12 +15,12 @@ public class OracleTest {
     @Test
     public void testOracle()throws Exception {
 
-        Complex[] x = new Complex[8];
-        Parameter[] x1 = new Parameter[8];
-        Parameter[] y1 = new Parameter[8];
-        Parameter[] z1 = new Parameter[8];
-        Parameter[] c1 = new Parameter[8];
-        Parameter[] d1 = new Parameter[8];
+        Complex[] x = new Complex[1];
+        Parameter[] x1 = new Parameter[1];
+        Parameter[] y1 = new Parameter[1];
+        Parameter[] z1 = new Parameter[1];
+        Parameter[] c1 = new Parameter[1];
+        Parameter[] d1 = new Parameter[1];
 
         for (int i = 0; i < x.length; i++) {
             x[i] = new Complex(i, 0);
@@ -28,19 +28,14 @@ public class OracleTest {
             x1[i]= new Parameter(x[i], null);
         }
 
-        //Parameter x1 = new Parameter(x, null);
 
         Complex[] y = FFT.fft(x);
-        //Parameter y1 = new Parameter(y, null);
 
         Complex[] z = FFT.ifft(y);
-        //Parameter z1 = new Parameter(z, null);
 
         Complex[] c = FFT.cconvolve(x, x);
-        //Parameter c1 = new Parameter(c, null);
 
         Complex[] d = FFT.convolve(x, x);
-        //Parameter d1 = new Parameter(d, null);
 
         for (int i = 0; i < x.length; i++) {
             y1[i] = new Parameter(y[i], null);
@@ -50,11 +45,11 @@ public class OracleTest {
         }
 
         Oracle oracle1 = new Oracle();
-        if(oracle1.checkResult(x1, y1) &&
-        oracle1.checkResult(x1, z1) &&
-        oracle1.checkResult(x1, c1) &&
-        oracle1.checkResult(x1, d1))
-        out.println("1");
+        oracle1.checkResult(x1, y1);
+        oracle1.checkResult(x1, z1);
+        oracle1.checkResult(x1, c1);
+        oracle1.checkResult(x1, d1);
+
     }
 
 }
