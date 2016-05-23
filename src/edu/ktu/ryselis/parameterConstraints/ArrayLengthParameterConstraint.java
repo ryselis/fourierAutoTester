@@ -20,4 +20,9 @@ public class ArrayLengthParameterConstraint implements ParameterConstraint {
     public ParameterConstraint getInverse() {
         return new ArrayLengthParameterConstraint(singleValueConstraint.getInverse());
     }
+
+    @Override
+    public boolean acceptsSingleValue() {
+        return true;
+    }
 }

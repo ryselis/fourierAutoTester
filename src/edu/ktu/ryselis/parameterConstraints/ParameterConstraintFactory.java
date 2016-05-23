@@ -2,6 +2,7 @@ package edu.ktu.ryselis.parameterConstraints;
 
 import com.github.javaparser.ast.expr.BinaryExpr;
 import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.IntegerLiteralExpr;
 
 /**
@@ -15,15 +16,18 @@ public class ParameterConstraintFactory {
             String operatorName = operator.name();
             if (operatorName.equals("equals")){
                 IntegerLiteralExpr rhs = (IntegerLiteralExpr) binaryExpression.getRight();
-                return new IntegerEqualsParameterConstraint(Integer.parseInt(rhs.getValue()));
+                return new ArrayLengthParameterConstraint(new IntegerEqualsParameterConstraint(Integer.parseInt(rhs.getValue())));
             }
             if (operatorName.equals("notEquals")){
                 if (binaryExpression.getLeft() instanceof BinaryExpr){
                     BinaryExpr lhsExpr = (BinaryExpr) binaryExpression.getLeft();
                     if (lhsExpr.getOperator().name().equals("remainder")){
                         IntegerLiteralExpr right = (IntegerLiteralExpr) lhsExpr.getRight();
-                        return new ModuloNotEqualsParameterConstraint(Integer.parseInt(right.getValue()));
+                        return new ArrayLengthParameterConstraint(new ModuloNotEqualsParameterConstraint(Integer.parseInt(right.getValue())));
                     }
+                }
+                if (binaryExpression.getLeft() instanceof FieldAccessExpr){
+                    return new ArrayLengthNotEqualParameterConstraint();
                 }
             }
         }

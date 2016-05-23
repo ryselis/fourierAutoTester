@@ -31,4 +31,9 @@ public class IntegerEqualsParameterConstraint implements ParameterConstraint {
     public ParameterConstraint getInverse() {
         return new IntegerNotEqualsParameterConstraint(equalsTo);
     }
+
+    @Override
+    public boolean acceptsSingleValue() {
+        return true;
+    }
 }
