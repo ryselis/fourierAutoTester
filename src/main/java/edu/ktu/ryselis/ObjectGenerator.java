@@ -41,7 +41,7 @@ public class ObjectGenerator {
                 Parameter mutatedParameterForSingleValue = chooserForSingleValue.constructNewParameter(parameterForSingleValue, objFunc);
                 newParameters[i] = mutatedParameterForSingleValue;
             }
-            Object[] newValues = new Object[newParameters.length];
+            Object[] newValues = (Object[]) Array.newInstance(((Object[]) parameter.getValue()).getClass().getComponentType(), newParameters.length);
             Object[][] newConstructorArgs = new Object[newParameters.length][];
             for (int i = 0; i < newParameters.length; i++){
                 newValues[i] = newParameters[i].getValue();
