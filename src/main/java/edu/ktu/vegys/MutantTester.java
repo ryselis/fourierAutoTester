@@ -1,21 +1,20 @@
 package edu.ktu.vegys;
 
-import edu.ktu.petkus.*;
+import edu.ktu.petkus.Coverage;
+import edu.ktu.petkus.MethodInvoker;
+import edu.ktu.petkus.MethodInvokerStaticParametersHolder;
 import edu.ktu.ryselis.Parameter;
 import edu.ktu.ryselis.Solution;
 import edu.ktu.ryselis.TestGenerator;
 import edu.ktu.stuliene.Oracle;
-import edu.ktu.tests.ryselis.FFT;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 public class MutantTester {
 
@@ -35,6 +34,9 @@ public class MutantTester {
 //        }
         for (Method method : mutantClass.getMethods()) {
             if ("main".equals(method.getName())) {
+                continue;
+            }
+            if (method.getClass() != mutantClass){
                 continue;
             }
             MethodTestResult methodTestResult = testMethod(method, mutantClass, mutantJavaFile);
@@ -73,7 +75,7 @@ public class MutantTester {
             Coverage coverager = new Coverage(System.out);
             double coverage = 0;
             try{
-                coverage = coverager.Cover(mutantObject.class, MethodInvoker.class);
+                coverage = coverager.Cover(mutantObject.getClass(), MethodInvoker.class);
             } catch (Exception ex) {
                 exceptionOccurred = true;
             }
