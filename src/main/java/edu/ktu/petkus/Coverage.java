@@ -13,21 +13,20 @@ import org.jacoco.core.runtime.RuntimeData;
 
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.net.URL;
 
 public class Coverage {
     private final PrintStream out;
     private String targetName = "";
-    private URL classFile;
     private RuntimeData data;
     private IRuntime runtime;
     public Coverage(final PrintStream out) {
         this.out = out;
     }
 
-    public void BeginCoverage(Object instance, URL classFile) throws Exception {
-        targetName = instance.getClass().getName();
-	this.classFile = classFile;
+    public double Cover(Class c, Class testHolder) throws Exception {
+        double res = 0;
+        targetName = c.getName();
+        String holderName = testHolder.getName();
 
         // For instrumentation and runtime we need a IRuntime instance
         // to collect execution data:
@@ -36,7 +35,8 @@ public class Coverage {
         // The Instrumenter creates a modified version of our test target class
         // that contains additional probes for execution data recording:
         final Instrumenter instr = new Instrumenter(runtime);
-        final byte[] instrumented = instr.instrument(classFile.openStream(), targetName);
+        final byte[] instrumented = instr.instrument(getTargetClass(targetName), targetName);
+        final byte[] instrumented2 = instr.instrument(getTargetClass(holderName), holderName);
 
         // Now we're ready to run our instrumented class and need to startup the
         // runtime first:
@@ -47,15 +47,15 @@ public class Coverage {
         // instrumented class definition from a byte[] instances.
         final MemoryClassLoader memoryClassLoader = new MemoryClassLoader();
         memoryClassLoader.addDefinition(targetName, instrumented);
+        memoryClassLoader.addDefinition(holderName, instrumented2);
         final Class<?> targetClass = memoryClassLoader.loadClass(targetName);
+        final Class<?> holderClass = memoryClassLoader.loadClass(holderName);
 
         // Here we execute our test target class through its Runnable interface:
-        final Runnable targetInstance = (Runnable) targetClass.newInstance();
-    }
+        // final Runnable targetInstance = (Runnable) targetClass.newInstance();
+        final Runnable targetInstance = (Runnable) holderClass.newInstance();
+        targetInstance.run();
 
-    public void EndCoverage() throws Exception{
-        // At the end of test execution we collect execution data and shutdown
-        // the runtime:
         final ExecutionDataStore executionData = new ExecutionDataStore();
         final SessionInfoStore sessionInfos = new SessionInfoStore();
         data.collect(executionData, sessionInfos, false);
@@ -65,22 +65,33 @@ public class Coverage {
         // information:
         final CoverageBuilder coverageBuilder = new CoverageBuilder();
         final Analyzer analyzer = new Analyzer(executionData, coverageBuilder);
-        analyzer.analyzeClass(classFile.openStream(), targetName);
+        analyzer.analyzeClass(getTargetClass(targetName), targetName);
 
         // Let's dump some metrics and line coverage information:
         for (final IClassCoverage cc : coverageBuilder.getClasses()) {
-            out.printf("Coverage of class %s%n", cc.getName());
+//            out.printf("Coverage of class %s%n", cc.getName());
 
-            printCounter("instructions", cc.getInstructionCounter());
-            printCounter("branches", cc.getBranchCounter());
-            printCounter("lines", cc.getLineCounter());
-            printCounter("methods", cc.getMethodCounter());
-            printCounter("complexity", cc.getComplexityCounter());
+//            printCounter("instructions", cc.getInstructionCounter());
+//            printCounter("branches", cc.getBranchCounter());
+//            printCounter("lines", cc.getLineCounter());
+//            printCounter("methods", cc.getMethodCounter());
+//            printCounter("complexity", cc.getComplexityCounter());
 
-            for (int i = cc.getFirstLine(); i <= cc.getLastLine(); i++) {
-                out.printf("Line %s: %s%n", Integer.valueOf(i));
-            }
+//            for (int i = cc.getFirstLine(); i <= cc.getLastLine(); i++) {
+//                out.printf("Line %s: %s%n", Integer.valueOf(i));
+//            }
+            int totalCount = cc.getLineCounter().getTotalCount();
+            int missedCount = cc.getLineCounter().getMissedCount();
+            int hitCount = totalCount - missedCount;
+
+            res = ((hitCount * 100) / totalCount);
         }
+        return res;
+    }
+
+    public InputStream getTargetClass(final String name) {
+        final String resource = '/' + name.replace('.', '/') + ".class";
+        return getClass().getResourceAsStream(resource);
     }
 
     private void printCounter(final String unit, final ICounter counter) {
