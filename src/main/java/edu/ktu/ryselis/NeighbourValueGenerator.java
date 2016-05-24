@@ -5,14 +5,14 @@ package edu.ktu.ryselis;
  */
 public class NeighbourValueGenerator implements ValueGenerator {
     @Override
-    public int generateValue(int basedOn) {
-        int upperBound = Math.abs(basedOn) / 2 + 2;
-        int lowerBound = -Math.abs(basedOn) / 2 - 2;
+    public int generateValue(int basedOn, double objFunc) {
+        int upperBound = (int) (Math.abs(basedOn) * objFunc + 2);
+        int lowerBound = (int) (-Math.abs(basedOn) * objFunc - 2);
         int variance = (int) (Math.random() * (upperBound - lowerBound) + lowerBound);
         long result = basedOn + variance;
-        if (result > upperBound || result < lowerBound){
-            result = generateValue(basedOn);
-        }
+//        if (result > upperBound || result < lowerBound){
+//            result = generateValue(basedOn);
+//        }
         return (int) result;
     }
 

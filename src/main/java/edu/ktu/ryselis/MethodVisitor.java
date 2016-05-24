@@ -7,7 +7,6 @@ import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.IfStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-import edu.ktu.ryselis.parameterConstraints.ArrayLengthParameterConstraint;
 import edu.ktu.ryselis.parameterConstraints.ParameterConstraint;
 import edu.ktu.ryselis.parameterConstraints.ParameterConstraintFactory;
 
@@ -59,7 +58,7 @@ public class MethodVisitor extends VoidVisitorAdapter {
         }
         Collection<ParameterConstraint> parameterConstraints = new ArrayList<>();
         for (Expression expression : expressions){
-            parameterConstraints.add(new ArrayLengthParameterConstraint(ParameterConstraintFactory.build(expression)));
+            parameterConstraints.add(ParameterConstraintFactory.build(expression));
         }
         return parameterConstraints;
     }

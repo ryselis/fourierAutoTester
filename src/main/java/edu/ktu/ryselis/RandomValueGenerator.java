@@ -5,7 +5,7 @@ package edu.ktu.ryselis;
  */
 public class RandomValueGenerator implements ValueGenerator {
     @Override
-    public int generateValue(int basedOn) {
+    public int generateValue(int basedOn, double objFunc) {
         return (int) (Math.random() * Integer.MAX_VALUE);
     }
 

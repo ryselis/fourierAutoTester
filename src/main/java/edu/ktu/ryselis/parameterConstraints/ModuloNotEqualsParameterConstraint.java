@@ -20,4 +20,9 @@ public class ModuloNotEqualsParameterConstraint implements ParameterConstraint {
     public ParameterConstraint getInverse() {
         return new ModuloEqualsParameterConstraint(moduloNotEqualTo);
     }
+
+    @Override
+    public boolean acceptsSingleValue() {
+        return true;
+    }
 }

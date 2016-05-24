@@ -21,7 +21,7 @@ public class TestGenerator {
     }
 
     private double getStartingTemperature() {
-        return 0;
+        return 1;
     }
 
     public Collection<Solution> generate() {
@@ -37,14 +37,22 @@ public class TestGenerator {
             int cannotFindBetterSolutionForThisManyRounds = 0;
             do {
                 cannotFindBetterSolutionForThisManyRounds++;
-                Solution solution = chooseRandomSolution(startingSolution);
-                double deltaE = obj(solution, parameterConstraints) - obj(startingSolution, parameterConstraints);
+                double objStartingSolution = obj(startingSolution, parameterConstraints);
+                Solution solution = chooseRandomSolution(startingSolution, objStartingSolution);
+                double newSolutionObj = obj(solution, parameterConstraints);
+                if (newSolutionObj == 0){
+                    startingSolution = solution;
+                    cannotFindBetterSolutionForThisManyRounds = 101;
+                    continue;
+                }
+
+                double deltaE = newSolutionObj - objStartingSolution;
                 if (deltaE < 0) {
                     startingSolution = solution;
                     cannotFindBetterSolutionForThisManyRounds = 0;
                 } else {
                     double r = Math.random();
-                    if (r < Math.pow(Math.E, -deltaE / temp)) {
+                    if (r < Math.pow(Math.E, ((-deltaE - 0.1) / temp))) {
                         startingSolution = solution;
                         cannotFindBetterSolutionForThisManyRounds = 0;
                     }
@@ -57,25 +65,39 @@ public class TestGenerator {
     }
 
     private double decreaseTemperatureAccordingToSchedule(double temp) {
-        double beta = Math.random() * 0.1;
+        double beta = Math.random() * 0.2;
         return temp / (1 + beta * temp);
     }
 
     private double obj(Solution startingSolution, Collection<ParameterConstraint> parameterConstraints) {
         double totalResult = 0;
-        for (Parameter parameter : startingSolution.getParameters()) {
-            for (ParameterConstraint possibleParameterConstraint : parameterConstraints) {
-                totalResult += possibleParameterConstraint.validateValue(parameter.getValue());
+        int count = 0;
+        for (ParameterConstraint possibleParameterConstraint : parameterConstraints) {
+            if (possibleParameterConstraint.acceptsSingleValue()) {
+                for (Parameter parameter : startingSolution.getParameters()) {
+                    totalResult += possibleParameterConstraint.validateValue(parameter.getValue());
+                    count += 1;
+                }
+            }
+            else {
+                Object[] values = new Object[startingSolution.getParameters().size()];
+                Parameter[] parameters = new Parameter[startingSolution.getParameters().size()];
+                startingSolution.getParameters().toArray(parameters);
+                for (int i = 0; i < values.length; i++){
+                    values[i] = parameters[i].getValue();
+                }
+                totalResult += possibleParameterConstraint.validateValue(values);
+                count += 1;
             }
         }
-        return totalResult / (parameterConstraints.size() * startingSolution.getParameters().size());
+        return totalResult / (count == 0 ? 1 : count);
     }
 
-    private Solution chooseRandomSolution(Solution startingSolution) {
+    private Solution chooseRandomSolution(Solution startingSolution, double objFunc) {
         Collection<Parameter> newParameters = new ArrayList<>();
         for (Parameter parameter: startingSolution.getParameters()){
             ObjectGenerator chooser = new ObjectGenerator();
-            Parameter newParameter = chooser.constructNewParameter(parameter);
+            Parameter newParameter = chooser.constructNewParameter(parameter, objFunc);
             newParameters.add(newParameter);
         }
         return new Solution(newParameters);
