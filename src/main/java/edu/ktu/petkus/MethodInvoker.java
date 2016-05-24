@@ -25,7 +25,7 @@ public class MethodInvoker implements Runnable {
             MethodInvokerStaticParametersHolder.exceptionOccurred = true;
         }
         if (thread.isAlive()) {
-            thread.interrupt();
+            thread.stop();
             MethodInvokerStaticParametersHolder.exceptionOccurred = true;
         }
     }
