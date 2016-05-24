@@ -13,18 +13,21 @@ import org.jacoco.core.runtime.RuntimeData;
 
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.net.URL;
 
 public class Coverage {
     private final PrintStream out;
     private String targetName = "";
+    private URL classFile;
     private RuntimeData data;
     private IRuntime runtime;
     public Coverage(final PrintStream out) {
         this.out = out;
     }
 
-    public void BeginCoverage(Object instance) throws Exception {
+    public void BeginCoverage(Object instance, URL classFile) throws Exception {
         targetName = instance.getClass().getName();
+	this.classFile = classFile;
 
         // For instrumentation and runtime we need a IRuntime instance
         // to collect execution data:
@@ -33,7 +36,7 @@ public class Coverage {
         // The Instrumenter creates a modified version of our test target class
         // that contains additional probes for execution data recording:
         final Instrumenter instr = new Instrumenter(runtime);
-        final byte[] instrumented = instr.instrument(getTargetClass(targetName), targetName);
+        final byte[] instrumented = instr.instrument(classFile.openStream(), targetName);
 
         // Now we're ready to run our instrumented class and need to startup the
         // runtime first:
@@ -62,7 +65,7 @@ public class Coverage {
         // information:
         final CoverageBuilder coverageBuilder = new CoverageBuilder();
         final Analyzer analyzer = new Analyzer(executionData, coverageBuilder);
-        analyzer.analyzeClass(getTargetClass(targetName), targetName);
+        analyzer.analyzeClass(classFile.openStream(), targetName);
 
         // Let's dump some metrics and line coverage information:
         for (final IClassCoverage cc : coverageBuilder.getClasses()) {
@@ -78,11 +81,6 @@ public class Coverage {
                 out.printf("Line %s: %s%n", Integer.valueOf(i));
             }
         }
-    }
-
-    public InputStream getTargetClass(final String name) {
-        final String resource = '/' + name.replace('.', '/') + ".class";
-        return getClass().getResourceAsStream(resource);
     }
 
     private void printCounter(final String unit, final ICounter counter) {
