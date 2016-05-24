@@ -32,11 +32,8 @@ public class MutantTester {
 //        } catch (Exception ex) {
 //            throw new CodeCoverageException(ex);
 //        }
-        for (Method method : mutantClass.getMethods()) {
+        for (Method method : mutantClass.getDeclaredMethods()) {
             if ("main".equals(method.getName())) {
-                continue;
-            }
-            if (method.getClass() != mutantClass){
                 continue;
             }
             MethodTestResult methodTestResult = testMethod(method, mutantClass, mutantJavaFile);
@@ -56,7 +53,7 @@ public class MutantTester {
         return classLoader.loadClass(className);
     }
 
-    private MethodTestResult testMethod(Method method, Object mutantObject, File mutantJavaFile) throws ReflectiveOperationException {
+    private MethodTestResult testMethod(Method method, Class mutantObject, File mutantJavaFile) throws ReflectiveOperationException {
         TestGenerator inputGenerator = new TestGenerator(method, mutantJavaFile.getAbsolutePath());
         Collection<Solution> inputs = inputGenerator.generate();
         int numCorrectResults = 0;
@@ -69,7 +66,7 @@ public class MutantTester {
             MethodInvokerStaticParametersHolder.resultObjects = resultObjects;
             MethodInvokerStaticParametersHolder.exceptionOccurred = exceptionOccurred;
             MethodInvokerStaticParametersHolder.method = method;
-            MethodInvokerStaticParametersHolder.mutantObject = mutantObject;
+            MethodInvokerStaticParametersHolder.mutantObject = mutantObject.newInstance();
             MethodInvokerStaticParametersHolder.paramsObjects = paramsObjects;
 
             Coverage coverager = new Coverage(System.out);

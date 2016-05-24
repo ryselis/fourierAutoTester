@@ -48,7 +48,7 @@ public class Coverage {
         final MemoryClassLoader memoryClassLoader = new MemoryClassLoader();
         memoryClassLoader.addDefinition(targetName, instrumented);
         memoryClassLoader.addDefinition(holderName, instrumented2);
-        final Class<?> targetClass = memoryClassLoader.loadClass(targetName);
+//        final Class<?> targetClass = memoryClassLoader.loadClass(targetName);
         final Class<?> holderClass = memoryClassLoader.loadClass(holderName);
 
         // Here we execute our test target class through its Runnable interface:
