@@ -26,6 +26,7 @@ public class CodeParser {
         try {
             inputStream = new FileInputStream(method.getPathToClassSource());
         } catch (FileNotFoundException ignored) {
+            throw new RuntimeException(ignored);
         }
         if (inputStream == null){
             return null;
@@ -33,6 +34,7 @@ public class CodeParser {
         try {
             compilationUnit = JavaParser.parse(inputStream);
         } catch (ParseException ignored) {
+            throw new RuntimeException(ignored);
         } finally {
             try {
                 inputStream.close();
@@ -44,6 +46,10 @@ public class CodeParser {
         }
         MethodVisitor visitor = new MethodVisitor(method);
         visitor.visit(compilationUnit, null);
-        return visitor.getParameterConstraints();
+        Collection<ParameterConstraint> parameterConstraints = visitor.getParameterConstraints();
+        if (parameterConstraints == null){
+            return null;
+        }
+        return parameterConstraints;
     }
 }

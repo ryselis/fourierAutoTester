@@ -97,7 +97,7 @@ public class ObjectGenerator {
         if (t.isArray()){
             Class innerClass = t.getComponentType();
             ParameterDefinition innerClassParameterDefinition = new ParameterDefinition(innerClass);
-            int arraySize = (int) (Math.random() * 3000);
+            int arraySize = (int) (Math.random() * 300);
             Object[] newInstance = (Object[]) Array.newInstance(innerClass, arraySize);
             Object[][] newConstructorArgs = new Object[arraySize][];
             for (int i = 0; i < arraySize; i++){

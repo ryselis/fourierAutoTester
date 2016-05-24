@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Arrays;
 import java.util.Collection;
 
 public class MutantTester {
@@ -54,6 +53,10 @@ public class MutantTester {
     }
 
     private MethodTestResult testMethod(Method method, Class mutantObject, File mutantJavaFile) throws ReflectiveOperationException {
+        System.out.println(mutantJavaFile);
+        if (mutantJavaFile.getAbsolutePath().contains("AOIS_76")){
+            int a = 1;
+        }
         TestGenerator inputGenerator = new TestGenerator(method, mutantJavaFile.getAbsolutePath());
         Collection<Solution> inputs = inputGenerator.generate();
         int numCorrectResults = 0;
@@ -83,10 +86,11 @@ public class MutantTester {
             if (exceptionOccurred) {
                 continue;
             }
-            Parameter[] result = Arrays.stream(resultObjects)
-                    .map(resultObject -> new Parameter(resultObject, null))
-                    .toArray(Parameter[]::new);
-            if (new Oracle().checkResult(params, result)) {
+            Object[] paramsToOracle = new Object[params.length];
+            for (int i = 0; i < paramsToOracle.length; i++) {
+                paramsToOracle[i] = params[i].getValue();
+            }
+            if (new Oracle().checkResult(paramsToOracle, resultObjects)) {
                 numCorrectResults++;
             }
         }

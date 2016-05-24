@@ -119,7 +119,6 @@ public class TestGenerator {
 
     private Collection<ParameterConstraint> getPossibleParameterConstraints(){
         CodeParser codeParser = new CodeParser(method);
-        System.out.println(method.getMethod().getName());
         return codeParser.getBranches();
     }
 }

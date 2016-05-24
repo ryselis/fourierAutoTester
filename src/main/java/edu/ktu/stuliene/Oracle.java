@@ -1,13 +1,11 @@
 package edu.ktu.stuliene;
 
-import edu.ktu.ryselis.Parameter;
-
 /**
  * Created by Aiste on 2016.05.16.
  */
 public class Oracle {
 
-    public boolean checkResult(Parameter[] data, Parameter[] result) {
+    public boolean checkResult(Object[] data, Object result) {
 
         /*if(data.getClass() != result.getClass())
             return false;
@@ -15,32 +13,38 @@ public class Oracle {
             return false;
         if (data.getType() != result.getType())
             return false;*/
-
-        for (int i = 0; i < data.length; i++) {
-            for (int j = 0; j < result.length; j++) {
-                if (data[i].getType() != result[j].getType())
-                    return false;
+        for (Object o : data) {
+            if (o.getClass() != result.getClass()){
+                return false;
             }
         }
 
-        if ((data.length > 1) && (data.length % 2 != 0) && (result.length > 0))
-            return false;
+        for (Object o : data) {
+            Object[] objects = (Object[]) o;
+            Object[] results = (Object[]) result;
+            if ((objects.length > 1) && (objects.length % 2 != 0) && (results.length > 0))
+                return false;
+            if ((objects.length > 1) && (objects.length % 2 == 0) && (results.length != data.length))
+                return false;
+            if((objects.length == 1) && (results.length != 1))
+                return false;
+            if((objects.length == 0) && (results.length != 0))
+                return false;
 
-        if ((data.length > 1) && (data.length % 2 == 0) && (result.length != data.length))
-            return false;
+            try {
+                double dat = Double.parseDouble(objects[0].toString().split("E")[0]);
+                double rez = Double.parseDouble(results[0].toString().split("E")[0]);
+                double eps = Math.pow(10, -10);
+                double dat2 = Math.pow(dat, 2);
+                if((objects.length == 1) && !((Math.abs(dat)- Math.abs(rez) < eps) || (dat2 - Math.abs(rez) < eps)))
+                    return false;
+            } catch (NullPointerException e){
+                return false;
+            } catch (NumberFormatException e){
+                return false;
+            }
+        }
 
-        if((data.length == 1) && (result.length != 1))
-            return false;
-
-        if((data.length == 0) && (result.length != 0))
-            return false;
-
-        double dat = Double.parseDouble(data[0].toString());
-        double rez = Double.parseDouble(result[0].toString());
-        double eps = Math.pow(10, -10);
-        double dat2 = Math.pow(dat, 2);
-        if((data.length == 1) && !((Math.abs(dat)- Math.abs(rez) < eps) || (dat2 - Math.abs(rez) < eps)))
-            return false;
 
         return true;
 

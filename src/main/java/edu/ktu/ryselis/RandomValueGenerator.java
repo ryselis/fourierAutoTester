@@ -11,6 +11,6 @@ public class RandomValueGenerator implements ValueGenerator {
 
     @Override
     public double generateValue(double basedOn) {
-        return Math.random() * Double.MAX_VALUE;
+        return Math.random() * 1000;
     }
 }
