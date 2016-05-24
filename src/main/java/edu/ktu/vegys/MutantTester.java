@@ -24,11 +24,11 @@ public class MutantTester {
         File mutantJavaFile = new File(mutantDirectory, MUTANT_CLASS_NAME + ".java");
         MutantTestResult mutantTestResult = new MutantTestResult(mutantDirectory.getName());
         Coverage codeCoverage = new Coverage(System.out);
-        try {
-            codeCoverage.BeginCoverage(mutantObject, mutantClassFile.toURI().toURL());
-        } catch (Exception ex) {
-            throw new CodeCoverageException(ex);
-        }
+//        try {
+//            codeCoverage.BeginCoverage(mutantObject, mutantClassFile.toURI().toURL());
+//        } catch (Exception ex) {
+//            throw new CodeCoverageException(ex);
+//        }
         for (Method method : mutantClass.getMethods()) {
             if ("main".equals(method.getName())) {
                 continue;
@@ -36,11 +36,11 @@ public class MutantTester {
             MethodTestResult methodTestResult = testMethod(method, mutantClass, mutantJavaFile);
             mutantTestResult.addMethodTestResult(methodTestResult);
         }
-        try {
-            codeCoverage.EndCoverage();
-        } catch (Exception ex) {
-            throw new CodeCoverageException(ex);
-        }
+//        try {
+//            codeCoverage.EndCoverage();
+//        } catch (Exception ex) {
+//            throw new CodeCoverageException(ex);
+//        }
         return mutantTestResult;
     }
 
