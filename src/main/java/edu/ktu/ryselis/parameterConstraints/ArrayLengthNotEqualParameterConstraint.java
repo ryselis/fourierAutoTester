@@ -24,4 +24,9 @@ public class ArrayLengthNotEqualParameterConstraint implements ParameterConstrai
     public boolean acceptsSingleValue() {
         return false;
     }
+
+    @Override
+    public boolean compliesWithPowerOf2Constraint() {
+        return true;
+    }
 }

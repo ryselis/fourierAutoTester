@@ -32,4 +32,9 @@ public class ArrayLengthEqualParameterConstraint implements ParameterConstraint 
     public boolean acceptsSingleValue() {
         return false;
     }
+
+    @Override
+    public boolean compliesWithPowerOf2Constraint() {
+        return true;
+    }
 }

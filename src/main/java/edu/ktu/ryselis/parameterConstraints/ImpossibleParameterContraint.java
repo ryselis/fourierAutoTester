@@ -18,4 +18,9 @@ public class ImpossibleParameterContraint implements ParameterConstraint {
     public boolean acceptsSingleValue() {
         return true;
     }
+
+    @Override
+    public boolean compliesWithPowerOf2Constraint() {
+        return true;
+    }
 }

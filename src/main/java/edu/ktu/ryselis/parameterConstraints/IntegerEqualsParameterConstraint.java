@@ -36,4 +36,9 @@ public class IntegerEqualsParameterConstraint implements ParameterConstraint {
     public boolean acceptsSingleValue() {
         return true;
     }
+
+    @Override
+    public boolean compliesWithPowerOf2Constraint() {
+        return (equalsTo & (equalsTo - 1)) == 0;
+    }
 }

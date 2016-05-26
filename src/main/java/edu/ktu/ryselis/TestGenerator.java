@@ -1,6 +1,8 @@
 package edu.ktu.ryselis;
 
+import edu.ktu.ryselis.parameterConstraints.ArrayLengthParameterConstraint;
 import edu.ktu.ryselis.parameterConstraints.ParameterConstraint;
+import edu.ktu.ryselis.parameterConstraints.PowerOf2ParameterConstraint;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -72,6 +74,12 @@ public class TestGenerator {
     private double obj(Solution startingSolution, Collection<ParameterConstraint> parameterConstraints) {
         double totalResult = 0;
         int count = 0;
+        boolean addPowerOf2Contraint = true;
+        for (ParameterConstraint parameterConstraint : parameterConstraints) {
+            if (!parameterConstraint.compliesWithPowerOf2Constraint()){
+                addPowerOf2Contraint = false;
+            }
+        }
         for (ParameterConstraint possibleParameterConstraint : parameterConstraints) {
             if (possibleParameterConstraint.acceptsSingleValue()) {
                 for (Parameter parameter : startingSolution.getParameters()) {
@@ -87,6 +95,12 @@ public class TestGenerator {
                     values[i] = parameters[i].getValue();
                 }
                 totalResult += possibleParameterConstraint.validateValue(values);
+                count += 1;
+            }
+        }
+        if (addPowerOf2Contraint){
+            for (Parameter parameter : startingSolution.getParameters()) {
+                totalResult += new ArrayLengthParameterConstraint(new PowerOf2ParameterConstraint()).validateValue(parameter.getValue());
                 count += 1;
             }
         }

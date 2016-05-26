@@ -25,4 +25,9 @@ public class IntegerNotEqualsParameterConstraint implements ParameterConstraint 
     public boolean acceptsSingleValue() {
         return true;
     }
+
+    @Override
+    public boolean compliesWithPowerOf2Constraint() {
+        return true;
+    }
 }

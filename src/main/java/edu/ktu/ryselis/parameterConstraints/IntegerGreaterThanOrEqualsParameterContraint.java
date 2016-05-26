@@ -36,4 +36,9 @@ public class IntegerGreaterThanOrEqualsParameterContraint implements ParameterCo
     public boolean acceptsSingleValue() {
         return true;
     }
+
+    @Override
+    public boolean compliesWithPowerOf2Constraint() {
+        return true;
+    }
 }

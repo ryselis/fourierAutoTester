@@ -7,4 +7,5 @@ public interface ParameterConstraint {
     double validateValue(Object value);
     ParameterConstraint getInverse();
     boolean acceptsSingleValue();
+    boolean compliesWithPowerOf2Constraint();
 }

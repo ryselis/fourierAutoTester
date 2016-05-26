@@ -35,7 +35,8 @@ public class Coverage {
         // The Instrumenter creates a modified version of our test target class
         // that contains additional probes for execution data recording:
         final Instrumenter instr = new Instrumenter(runtime);
-        final byte[] instrumented = instr.instrument(c.getClassLoader().getResourceAsStream(c.getName() + ".java"), targetName);
+//        final byte[] instrumented = instr.instrument(c.getClassLoader().getResourceAsStream(c.getName() + ".java"), targetName);
+        final byte[] instrumented = instr.instrument(getTargetClass(targetName), holderName);
         final byte[] instrumented2 = instr.instrument(getTargetClass(holderName), holderName);
 
         // Now we're ready to run our instrumented class and need to startup the

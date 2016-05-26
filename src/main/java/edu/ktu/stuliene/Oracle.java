@@ -28,7 +28,7 @@ public class Oracle {
             Object[] results = (Object[]) result;
             if ((objects.length > 1) && (objects.length % 2 != 0) && (results.length > 0))
                 return false;
-            if ((objects.length > 1) && (objects.length % 2 == 0) && (results.length != data.length))
+            if ((objects.length > 1) && (objects.length % 2 == 0) && (results.length != objects.length))
                 return false;
             if((objects.length == 1) && (results.length != 1))
                 return false;

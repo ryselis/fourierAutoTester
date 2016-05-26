@@ -36,4 +36,9 @@ public class IntegerLessThanParameterConstraint implements ParameterConstraint {
     public boolean acceptsSingleValue() {
         return true;
     }
+
+    @Override
+    public boolean compliesWithPowerOf2Constraint() {
+        return greaterThan > 2;
+    }
 }

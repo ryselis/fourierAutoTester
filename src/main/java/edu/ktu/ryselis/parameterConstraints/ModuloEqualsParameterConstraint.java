@@ -16,7 +16,7 @@ public class ModuloEqualsParameterConstraint implements ParameterConstraint {
         int remainder = val % moduloEqualTo;
         int distanceFromZero = remainder;
         int distanceFromMax = moduloEqualTo - remainder;
-        return distanceFromMax > distanceFromMax ? distanceFromMax : distanceFromZero;
+        return (distanceFromMax < distanceFromZero ? distanceFromMax : distanceFromZero) / moduloEqualTo;
     }
 
     @Override
@@ -27,5 +27,10 @@ public class ModuloEqualsParameterConstraint implements ParameterConstraint {
     @Override
     public boolean acceptsSingleValue() {
         return true;
+    }
+
+    @Override
+    public boolean compliesWithPowerOf2Constraint() {
+        return (moduloEqualTo & (moduloEqualTo - 1)) == 0;
     }
 }

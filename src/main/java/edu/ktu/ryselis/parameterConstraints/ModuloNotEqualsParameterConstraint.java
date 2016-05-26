@@ -25,4 +25,9 @@ public class ModuloNotEqualsParameterConstraint implements ParameterConstraint {
     public boolean acceptsSingleValue() {
         return true;
     }
+
+    @Override
+    public boolean compliesWithPowerOf2Constraint() {
+        return (moduloNotEqualTo & (moduloNotEqualTo - 1)) != 0;
+    }
 }

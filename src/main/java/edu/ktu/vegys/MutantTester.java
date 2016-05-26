@@ -53,7 +53,6 @@ public class MutantTester {
     }
 
     private MethodTestResult testMethod(Method method, Class mutantObject, File mutantJavaFile) throws ReflectiveOperationException {
-        System.out.println(mutantJavaFile);
         if (mutantJavaFile.getAbsolutePath().contains("AOIS_76")){
             int a = 1;
         }
@@ -75,9 +74,9 @@ public class MutantTester {
             Coverage coverager = new Coverage(System.out);
             double coverage = 0;
             try {
-                coverage = coverager.Cover(mutantObject, MethodInvoker.class);
+                coverage = coverager.Cover(mutantObject.getClass(), MethodInvoker.class);
             } catch (Exception e) {
-                e.printStackTrace();
+                //e.printStackTrace();
             }
 
             resultObjects = MethodInvokerStaticParametersHolder.resultObjects;
@@ -90,10 +89,7 @@ public class MutantTester {
             if (resultIsGood) {
                 numCorrectResults++;
             }
-            System.out.println(coverage);
-            System.out.println(exceptionOccurred);
         }
-        System.out.println(numCorrectResults == inputs.size());
         return new MethodTestResult(method.getName(), inputs.size(), numCorrectResults);
     }
 }
