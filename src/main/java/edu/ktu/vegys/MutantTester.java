@@ -32,7 +32,7 @@ public class MutantTester {
 //            throw new CodeCoverageException(ex);
 //        }
         for (Method method : mutantClass.getDeclaredMethods()) {
-            if ("main".equals(method.getName())) {
+            if (!"fft".equals(method.getName())) {
                 continue;
             }
             MethodTestResult methodTestResult = testMethod(method, mutantClass, mutantJavaFile);
@@ -77,23 +77,22 @@ public class MutantTester {
             try{
                 coverage = coverager.Cover(mutantObject.getClass(), MethodInvoker.class);
             } catch (Exception ex) {
-                exceptionOccurred = true;
             }
 
             resultObjects = MethodInvokerStaticParametersHolder.resultObjects;
             exceptionOccurred = MethodInvokerStaticParametersHolder.exceptionOccurred;
-
-            if (exceptionOccurred) {
-                continue;
-            }
             Object[] paramsToOracle = new Object[params.length];
             for (int i = 0; i < paramsToOracle.length; i++) {
                 paramsToOracle[i] = params[i].getValue();
             }
-            if (new Oracle().checkResult(paramsToOracle, resultObjects)) {
+            boolean resultIsGood = new Oracle().checkResult(paramsToOracle, resultObjects, exceptionOccurred);
+            if (resultIsGood) {
                 numCorrectResults++;
             }
+            System.out.println(coverage);
+            System.out.println(exceptionOccurred);
         }
+        System.out.println(numCorrectResults == inputs.size());
         return new MethodTestResult(method.getName(), inputs.size(), numCorrectResults);
     }
 }

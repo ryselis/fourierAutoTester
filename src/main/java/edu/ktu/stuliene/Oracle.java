@@ -5,7 +5,7 @@ package edu.ktu.stuliene;
  */
 public class Oracle {
 
-    public boolean checkResult(Object[] data, Object result) {
+    public boolean checkResult(Object[] data, Object result, boolean exceptionOccured) {
 
         /*if(data.getClass() != result.getClass())
             return false;
@@ -13,6 +13,10 @@ public class Oracle {
             return false;
         if (data.getType() != result.getType())
             return false;*/
+        if (exceptionOccured){
+            Object[] objects = (Object[]) data[0];
+            return objects.length % 2 != 0;
+        }
         for (Object o : data) {
             if (o.getClass() != result.getClass()){
                 return false;
