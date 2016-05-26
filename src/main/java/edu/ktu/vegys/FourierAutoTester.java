@@ -18,14 +18,15 @@ public class FourierAutoTester {
             MutantTestResult mutantTestResult = mutantTestResults.get(i);
             System.out.print(i+1 + "\t");
             System.out.print(mutantTestResult.getMutantName() + "\t");
-            System.out.print(mutantTestResult.getMethodTestResults().size() + "\t");
+            int invocations = 0;
             boolean allTestsPassed = true;
             for (MethodTestResult methodTestResult : mutantTestResult.getMethodTestResults()) {
                 if (methodTestResult.getNumCorrectResults() !=  methodTestResult.getNumInvocations()){
                     allTestsPassed = false;
-                    break;
                 }
+                invocations+=methodTestResult.getNumInvocations();
             }
+            System.out.print(invocations + "\t");
             if (allTestsPassed){
                 System.out.print("good\t");
             } else {
