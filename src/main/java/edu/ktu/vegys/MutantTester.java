@@ -74,9 +74,10 @@ public class MutantTester {
 
             Coverage coverager = new Coverage(System.out);
             double coverage = 0;
-            try{
-                coverage = coverager.Cover(mutantObject.getClass(), MethodInvoker.class);
-            } catch (Exception ex) {
+            try {
+                coverage = coverager.Cover(mutantObject, MethodInvoker.class, mutantJavaFile.getAbsolutePath());
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
             resultObjects = MethodInvokerStaticParametersHolder.resultObjects;

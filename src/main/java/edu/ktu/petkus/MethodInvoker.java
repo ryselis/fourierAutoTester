@@ -21,7 +21,7 @@ public class MethodInvoker implements Runnable {
             Thread thread = new AsyncMethodInvoker(method, mutantObject, paramsObjects);
             thread.start();
             try {
-                thread.join();
+                thread.join(10000);
             } catch (InterruptedException e) {
                 MethodInvokerStaticParametersHolder.exceptionOccurred = true;
             }

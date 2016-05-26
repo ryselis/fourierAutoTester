@@ -23,7 +23,7 @@ public class Coverage {
         this.out = out;
     }
 
-    public double Cover(Class c, Class testHolder) throws Exception {
+    public double Cover(Class c, Class testHolder, String absolutePath) throws Exception {
         double res = 0;
         targetName = c.getName();
         String holderName = testHolder.getName();
