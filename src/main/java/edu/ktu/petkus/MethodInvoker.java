@@ -1,5 +1,7 @@
 package edu.ktu.petkus;
 
+import java.lang.reflect.InvocationTargetException;
+
 /**
  * Created by Tautvydas on 5/24/2016.
  */
@@ -17,6 +19,14 @@ public class MethodInvoker implements Runnable {
 //            Object[] betterParamsObjects = new Object[paramsObjects.length];
 //            for (int i = 0; i < paramsObjects.length; i++){
 //                betterParamsObjects[i] = method.getParameterTypes()[i].cast(paramsObjects[i]);
+//            }
+//            try {
+//                Object[] resultObjects = (Object[]) method.invoke(mutantObject, paramsObjects);
+//                MethodInvokerStaticParametersHolder.resultObjects = resultObjects;
+//            } catch (IllegalAccessException e) {
+//                MethodInvokerStaticParametersHolder.exceptionOccurred = true;
+//            } catch (InvocationTargetException e) {
+//                MethodInvokerStaticParametersHolder.exceptionOccurred = true;
 //            }
             Thread thread = new AsyncMethodInvoker(method, mutantObject, paramsObjects);
             thread.start();

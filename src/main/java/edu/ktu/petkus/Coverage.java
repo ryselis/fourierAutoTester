@@ -1,18 +1,17 @@
 package edu.ktu.petkus;
 
-import org.jacoco.core.analysis.Analyzer;
-import org.jacoco.core.analysis.CoverageBuilder;
-import org.jacoco.core.analysis.IClassCoverage;
-import org.jacoco.core.analysis.ICounter;
+import org.jacoco.core.analysis.*;
 import org.jacoco.core.data.ExecutionDataStore;
 import org.jacoco.core.data.SessionInfoStore;
 import org.jacoco.core.instr.Instrumenter;
 import org.jacoco.core.runtime.IRuntime;
 import org.jacoco.core.runtime.LoggerRuntime;
 import org.jacoco.core.runtime.RuntimeData;
+import org.objectweb.asm.ClassReader;
 
-import java.io.InputStream;
-import java.io.PrintStream;
+import java.io.*;
+import java.lang.reflect.Method;
+import java.util.Collection;
 
 public class Coverage {
     private final PrintStream out;
@@ -23,7 +22,7 @@ public class Coverage {
         this.out = out;
     }
 
-    public double Cover(Class c, Class testHolder) throws Exception {
+    public double Cover(Class c, Class testHolder, String mutantPackage) throws Exception {
         double res = 0;
         targetName = c.getName();
         String holderName = testHolder.getName();
@@ -35,9 +34,16 @@ public class Coverage {
         // The Instrumenter creates a modified version of our test target class
         // that contains additional probes for execution data recording:
         final Instrumenter instr = new Instrumenter(runtime);
-//        final byte[] instrumented = instr.instrument(c.getClassLoader().getResourceAsStream(c.getName() + ".java"), targetName);
-        final byte[] instrumented = instr.instrument(getTargetClass(targetName), holderName);
-        final byte[] instrumented2 = instr.instrument(getTargetClass(holderName), holderName);
+//        final byte[] instrumented = instr.instrument(c.getClassLoader().getResourceAsStream(c.getName() + ".java"), targetName).rep);
+        final byte[] instrumented;
+        if (mutantPackage == ""){
+            instrumented = instr.instrument(getTargetClass(targetName), targetName);
+        }
+        else{
+//            instrumented = instr.instrument(getTargetClassByObject(c), c.getName());
+            instrumented = instr.instrument(getTargetClassByObject(c), targetName);
+        }
+
 
         // Now we're ready to run our instrumented class and need to startup the
         // runtime first:
@@ -48,14 +54,19 @@ public class Coverage {
         // instrumented class definition from a byte[] instances.
         final MemoryClassLoader memoryClassLoader = new MemoryClassLoader();
         memoryClassLoader.addDefinition(targetName, instrumented);
-        memoryClassLoader.addDefinition(holderName, instrumented2);
-//        final Class<?> targetClass = memoryClassLoader.loadClass(targetName);
+        final Class<?> targetClass = memoryClassLoader.loadClass(targetName);
         final Class<?> holderClass = memoryClassLoader.loadClass(holderName);
 
+        for (Method method : targetClass.getDeclaredMethods()) {
+            if (!"fft".equals(method.getName())) {
+                continue;
+            }
+            MethodInvokerStaticParametersHolder.method = method;
+        }
         // Here we execute our test target class through its Runnable interface:
-        // final Runnable targetInstance = (Runnable) targetClass.newInstance();
-        final Runnable targetInstance = (Runnable) holderClass.newInstance();
-        targetInstance.run();
+        MethodInvokerStaticParametersHolder.mutantObject = targetClass.newInstance();
+        final Runnable holderInstance = (Runnable) holderClass.newInstance();
+        holderInstance.run();
 
         final ExecutionDataStore executionData = new ExecutionDataStore();
         final SessionInfoStore sessionInfos = new SessionInfoStore();
@@ -66,10 +77,26 @@ public class Coverage {
         // information:
         final CoverageBuilder coverageBuilder = new CoverageBuilder();
         final Analyzer analyzer = new Analyzer(executionData, coverageBuilder);
-        analyzer.analyzeClass(getTargetClass(targetName), targetName);
-
+        if (mutantPackage == ""){
+            analyzer.analyzeClass(getTargetClass(targetName), targetName);
+        }
+        else{
+//            analyzer.analyzeClass(getTargetClassByObject(FFT.class), c.getName());
+            analyzer.analyzeClass(getTargetClassByObject(c), targetName);
+        }
         // Let's dump some metrics and line coverage information:
         for (final IClassCoverage cc : coverageBuilder.getClasses()) {
+            Collection<IMethodCoverage> methods = cc.getMethods();
+            for (IMethodCoverage methodCoverage : methods ){
+                String methodName = methodCoverage.getName();
+                if (methodName.equals("fft")){
+                    int missedCount = methodCoverage.getLineCounter().getMissedCount();
+                    int totalCount = methodCoverage.getLineCounter().getTotalCount();
+                    int hitCount = methodCoverage.getLineCounter().getCoveredCount();
+
+                    res = (((hitCount) * 100) / totalCount);
+                }
+            }
 //            out.printf("Coverage of class %s%n", cc.getName());
 
 //            printCounter("instructions", cc.getInstructionCounter());
@@ -81,13 +108,14 @@ public class Coverage {
 //            for (int i = cc.getFirstLine(); i <= cc.getLastLine(); i++) {
 //                out.printf("Line %s: %s%n", Integer.valueOf(i));
 //            }
-            int totalCount = cc.getLineCounter().getTotalCount();
-            int missedCount = cc.getLineCounter().getMissedCount();
-            int hitCount = totalCount - missedCount;
 
-            res = ((hitCount * 100) / totalCount);
         }
         return res;
+    }
+
+    public InputStream getTargetClassByObject(Class c) throws IOException {
+        final String resource = c.getSimpleName() + ".class";
+        return c.getResourceAsStream(resource);
     }
 
     public InputStream getTargetClass(final String name) {

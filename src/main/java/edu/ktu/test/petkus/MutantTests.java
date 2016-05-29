@@ -22,7 +22,7 @@ public class MutantTests {
             List<MutantTestResult> mutantTestResults = new ArrayList<>();
             for (File mutantDirectory : new File("mutants").listFiles()) {
                 ActiveMutant.ActiveMutant = mutantDirectory;
-                double coverage = coverager.Cover(FFT.class, MutantTestHolder.class);
+                double coverage = coverager.Cover(FFT.class, MutantTestHolder.class, "");
                 System.out.print(coverage);
             }
         }

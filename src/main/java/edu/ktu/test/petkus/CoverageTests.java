@@ -15,7 +15,7 @@ public class CoverageTests {
         Coverage coverager = new Coverage(System.out);
         CoverageTargets target = new CoverageTargets();
         try{
-            double coverage = coverager.Cover(CoverageTargets.class, TestHolder.class);
+            double coverage = coverager.Cover(CoverageTargets.class, TestHolder.class, "");
             System.out.print(coverage);
         }
         catch (Exception e){
@@ -27,7 +27,7 @@ public class CoverageTests {
     public void TestFFTGenerator(){
         Coverage coverager = new Coverage(System.out);
         try{
-            double coverage = coverager.Cover(FFT.class, GeneratorTestHolder.class);
+            double coverage = coverager.Cover(FFT.class, GeneratorTestHolder.class, "");
             System.out.print(coverage);
         }
         catch (Exception e){

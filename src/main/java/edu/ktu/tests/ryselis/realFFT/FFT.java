@@ -1,3 +1,5 @@
+package edu.ktu.tests.ryselis.realFFT;
+
 /*************************************************************************
  *  Compilation:  javac FFT.java
  *  Execution:    java FFT N

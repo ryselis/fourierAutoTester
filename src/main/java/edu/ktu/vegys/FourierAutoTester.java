@@ -11,7 +11,7 @@ public class FourierAutoTester {
         MutantTester mutantTester = new MutantTester();
         List<MutantTestResult> mutantTestResults = new ArrayList<>();
         mutantTestResults.add(mutantTester.test(new File("src/main/java/edu/ktu/tests/ryselis/realFFT")));
-        for (File mutantDirectory : new File("mutants").listFiles()) {
+        for (File mutantDirectory : new File("src/main/java/edu/ktu/tests/ryselis/mutants").listFiles()) {
             mutantTestResults.add(mutantTester.test(mutantDirectory));
         }
         for (int i = 0; i < mutantTestResults.size(); i++) {
@@ -19,12 +19,16 @@ public class FourierAutoTester {
             System.out.print(i+1 + "\t");
             System.out.print(mutantTestResult.getMutantName() + "\t");
             int invocations = 0;
+            double coverage = 0;
             boolean allTestsPassed = true;
             for (MethodTestResult methodTestResult : mutantTestResult.getMethodTestResults()) {
                 if (methodTestResult.getNumCorrectResults() !=  methodTestResult.getNumInvocations()){
                     allTestsPassed = false;
                 }
                 invocations+=methodTestResult.getNumInvocations();
+                if (methodTestResult.getCoverage() > coverage){
+                    coverage = methodTestResult.getCoverage();
+                }
             }
             System.out.print(invocations + "\t");
             if (allTestsPassed){
@@ -32,7 +36,7 @@ public class FourierAutoTester {
             } else {
                 System.out.print("mutant\t");
             }
-            System.out.print("Coverage not working yet");
+            System.out.print("Coverage : "+coverage);
             System.out.println();
         }
     }

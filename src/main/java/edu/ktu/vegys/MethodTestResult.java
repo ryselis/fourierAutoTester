@@ -5,11 +5,13 @@ public class MethodTestResult {
     private final String methodName;
     private final int numInvocations;
     private final int numCorrectResults;
+    private final double coverage;
 
-    public MethodTestResult(String methodName, int numInvocations, int numCorrectResults) {
+    public MethodTestResult(String methodName, int numInvocations, int numCorrectResults, double coverage) {
         this.methodName = methodName;
         this.numInvocations = numInvocations;
         this.numCorrectResults = numCorrectResults;
+        this.coverage = coverage;
     }
 
     public String getMethodName() {
@@ -22,5 +24,9 @@ public class MethodTestResult {
 
     public int getNumCorrectResults() {
         return numCorrectResults;
+    }
+
+    public double getCoverage() {
+        return coverage;
     }
 }

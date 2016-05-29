@@ -15,6 +15,7 @@ import java.util.List;
  */
 public class TestGeneratorTest {
     @Test
+    
     public void generate() throws Exception {
         File f = new File("src/edu/ktu/tests/ryselis/FFT.java");
         TestGenerator generator = new TestGenerator(FFT.class.getMethod("fft", Complex[].class), f.getAbsolutePath());

@@ -21,7 +21,8 @@ public class MutantTester {
 
     public MutantTestResult test(File mutantDirectory) throws IOException, ReflectiveOperationException, CodeCoverageException {
         File mutantClassFile = new File(mutantDirectory, MUTANT_CLASS_NAME + ".class");
-        Class<?> mutantClass = loadClass(mutantClassFile, MUTANT_CLASS_NAME);
+        String mutantPackage = mutantClassFile.getParentFile().toURI().toURL().getPath().split("java/")[1].replace("/", ".");
+        Class<?> mutantClass = loadClass(mutantClassFile, MUTANT_CLASS_NAME, mutantPackage);
         Object mutantObject = mutantClass.newInstance();
         File mutantJavaFile = new File(mutantDirectory, MUTANT_CLASS_NAME + ".java");
         MutantTestResult mutantTestResult = new MutantTestResult(mutantDirectory.getName());
@@ -35,7 +36,7 @@ public class MutantTester {
             if (!"fft".equals(method.getName())) {
                 continue;
             }
-            MethodTestResult methodTestResult = testMethod(method, mutantClass, mutantJavaFile);
+            MethodTestResult methodTestResult = testMethod(method, mutantClass, mutantJavaFile, mutantPackage);
             mutantTestResult.addMethodTestResult(methodTestResult);
         }
 //        try {
@@ -46,19 +47,21 @@ public class MutantTester {
         return mutantTestResult;
     }
 
-    private Class<?> loadClass(File mutantClassFile, String className) throws IOException, ReflectiveOperationException {
+    private Class<?> loadClass(File mutantClassFile, String className, String packageName) throws IOException, ReflectiveOperationException {
         URL directoryUrl = mutantClassFile.getParentFile().toURI().toURL();
+        mutantClassFile.getClass().getPackage();
         ClassLoader classLoader = new URLClassLoader(new URL[]{directoryUrl});
-        return classLoader.loadClass(className);
+        return classLoader.loadClass(packageName+className);
     }
 
-    private MethodTestResult testMethod(Method method, Class mutantObject, File mutantJavaFile) throws ReflectiveOperationException {
+    private MethodTestResult testMethod(Method method, Class mutantObject, File mutantJavaFile, String mutantPackage) throws ReflectiveOperationException {
         if (mutantJavaFile.getAbsolutePath().contains("AOIS_76")){
             int a = 1;
         }
         TestGenerator inputGenerator = new TestGenerator(method, mutantJavaFile.getAbsolutePath());
         Collection<Solution> inputs = inputGenerator.generate();
         int numCorrectResults = 0;
+        double coverage = 0;
         for (Solution input : inputs) {
             Parameter[] params = input.getParameters().toArray(new Parameter[]{});
             Object[] paramsObjects = input.getParameters().stream().map(Parameter::getValue).toArray();
@@ -72,11 +75,14 @@ public class MutantTester {
             MethodInvokerStaticParametersHolder.paramsObjects = paramsObjects;
 
             Coverage coverager = new Coverage(System.out);
-            double coverage = 0;
+            double coveragePending = 0;
             try {
-                coverage = coverager.Cover(mutantObject.getClass(), MethodInvoker.class);
+                coverage = coverager.Cover(method.getDeclaringClass(), MethodInvoker.class, mutantPackage);
             } catch (Exception e) {
-                //e.printStackTrace();
+                e.printStackTrace();
+            }
+            if (coveragePending > coverage){
+                coveragePending = coverage;
             }
 
             resultObjects = MethodInvokerStaticParametersHolder.resultObjects;
@@ -90,6 +96,6 @@ public class MutantTester {
                 numCorrectResults++;
             }
         }
-        return new MethodTestResult(method.getName(), inputs.size(), numCorrectResults);
+        return new MethodTestResult(method.getName(), inputs.size(), numCorrectResults, coverage);
     }
 }
