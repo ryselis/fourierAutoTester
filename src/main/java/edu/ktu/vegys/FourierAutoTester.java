@@ -14,6 +14,7 @@ public class FourierAutoTester {
         for (File mutantDirectory : new File("src/main/java/edu/ktu/tests/ryselis/mutants").listFiles()) {
             mutantTestResults.add(mutantTester.test(mutantDirectory));
         }
+        int nm = 0;
         for (int i = 0; i < mutantTestResults.size(); i++) {
             MutantTestResult mutantTestResult = mutantTestResults.get(i);
             System.out.print(i+1 + "\t");
@@ -35,9 +36,12 @@ public class FourierAutoTester {
                 System.out.print("good\t");
             } else {
                 System.out.print("mutant\t");
+                nm++;
             }
             System.out.print("Coverage : "+coverage);
             System.out.println();
         }
+        System.out.println("Find mutants: ");
+        System.out.println(nm);
     }
 }
